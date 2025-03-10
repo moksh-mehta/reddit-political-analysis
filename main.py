@@ -17,7 +17,7 @@ reddit = praw.Reddit(
 )
 
 # List target subreddits
-subreddits = ["politics", "news", "socialism"]
+subreddits = ["politics", "news", "socialism", "communism", "antiwork"]
 subreddits = [item.lower() for item in subreddits]
 
 # Set some parameters
@@ -44,9 +44,9 @@ for sub in subreddits:
     if auth_limits and auth_limits["remaining"]:
         left = auth_limits["remaining"]
         # If we would run out of calls wait until reset
-        # This will need to be modified, currently 2 calls per author and 2
+        # This will need to be modified, currently 4 calls per author and 2
         # per subreddit
-        if left - 2 - (2 * count) < 0:
+        if left - 2 - (4 * count) < 0:
             timestamp = time.time()
             reset_time = auth_limits["reset_timestamp"]
             difference = reset_time - timestamp
@@ -64,8 +64,9 @@ for sub in subreddits:
     # Iterate through authors, getting their top subreddits and their karma
     top_subs = {}
     for author in authors:
+        # Keep track of their subreddits
+        my_subs = []
         # Feedback mechanism for large requests
-        print(author)
         if author != None:
             # Use praw to get the content of this user - avoids requests issue
             content = []
@@ -73,15 +74,23 @@ for sub in subreddits:
             # Add comments and posts
             content.extend(reddit.redditor(author.name).comments.top(limit = 10))
             content.extend(reddit.redditor(author.name).submissions.top(limit = 10))
+            content.extend(reddit.redditor(author.name).comments.new(limit = 10))
+            content.extend(reddit.redditor(author.name).submissions.new(limit = 10))
             # Get top/newwest comments
             for item in content:
                 # Add score
                 if item.subreddit in top_subs:
-                    top_subs[item.subreddit] += item.score
+                    top_subs[item.subreddit][0] += item.score
+                    if item.subreddit not in my_subs:
+                        top_subs[item.subreddit][1] += 1
+                        my_subs.append(item.subreddit)
                 else:
-                    top_subs[item.subreddit] = item.score
+                    top_subs[item.subreddit] = [item.score, 1]
+                    my_subs.append(item.subreddit)
     print(top_subs)
-    sortable = dict(sorted(top_subs.items(), key=lambda item: item[1], reverse=True))
+    # Fitler by shred subreddits
+    new_top = {k: v for k, v in top_subs.items() if v[1] >= 2}
+    sortable = dict(sorted(new_top.items(), key=lambda item: item[1][0], reverse=True))
     new_row = (sub, sortable, subscribers)
     subs.loc[len(subs)] = new_row
     print(str(reddit.auth.limits["remaining"]) + " calls left!")
