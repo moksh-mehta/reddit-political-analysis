@@ -1,1 +1,8 @@
-guns
+conservative
+politics
+republican
+liberal
+democrats
+progressive
+joerogan
+trump

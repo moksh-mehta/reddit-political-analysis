@@ -37,13 +37,13 @@ per_user = 50
 # Threshold for minimum member crossover to merit a deeper search
 threshold = 5
 # Max subreddit to search, limit time
-max_subs = 25
+max_subs = 1000
 # Minimum subscribers for a subreddit to be searched
-min_members = 100000
+min_members = 50000
 # Max subscribers for a subreddit to be searched, limit irrelevant ones
 max_members = 100000000
 # Define a limit for how many sub-communities there should be
-max_sub_communities = 25
+max_sub_communities = 50
 # Define a limit for branching, i.e. only top 10
 branch_limit = 3
 
@@ -95,7 +95,6 @@ for sub in subreddits:
     # Iterate through authors, getting their top subreddits and their karma
     top_subs = {}
     for author in set(authors):
-        print(author)
         # Keep track of their subreddits
         my_subs = []
         # Feedback mechanism for large requests
