@@ -16,7 +16,7 @@ dictionary for that subreddit. It isn't possible to query individual pairings
 directly, though this is intentional as we plan to only do clustering on the
 ~500 subreddits we explicitly queried using the 25,000 relationship datapoints.
 
-Our data is all derived from Reddit, as was collected with the Python Reddit
+Our data is all derived from Reddit, and was collected with the Python Reddit
 API Wrapper, or PRAW. We registered our script with Reddit to get an API key
 and followed all their policies on API calls, implementing checks to make sure
 we did not go over the call limit. Given we are scraping directly from Reddit
@@ -27,7 +27,7 @@ in seeds.txt and used a breadth-first search to add new subreddits to a queue
 that the script worked through gradually. A subreddit was added to the queue
 if the one the script was currently on was found to have at least 5 users
 who all participated in that community as well, with a limit of three additions
-per subreddit as to prevent excessive queues. Subreddits also had to have at
+per subreddit to prevent excessive queues. Subreddits also had to have at
 least 50,000 members to merit a search.
 
 It is worth noting that these "users" for each subreddit were not selected out
@@ -42,13 +42,13 @@ Since Reddit also makes private what posts and comments users have upvoted,
 we instead looked at the top and newest 50 posts and comments for each user,
 so 200 pieces of content total. While there is some potential for overlap here,
 for example if the users most recent post was also their top one, we determined
-this wouldn't run in counter to our goal of finding the other communities a 
+this wouldn't run counter to our goal of finding the other communities a 
 subreddit's top users were active on. 
 
 Using these 200 pieces of content the total karma score and community name were
 added to a subdictionary for the overarching community being analyzed in that
-loop iteration, and counters were used to keep track of how many users also
-posted in certain communities.
+loop iteration, and counters were used to keep track of how much overlap
+there was with each community.
 
 All the filtering parameters described above are modifiable and explained in 
 the main script. The values we used to get our sample are as follows:
@@ -73,8 +73,8 @@ largest communities on the platform. The top communities would have the most
 overlap amongst users in the seed communities, and they were quickly added
 to the queue as a result.
 
-All of our data was cleaned as we were collecting it, meaning none was done
-after the JSON file was updated. We checked that users were not suspended
+All of our data was cleaned as we were collecting it, meaning no cleaning was 
+done after the JSON file was updated. We checked that users were not suspended
 as that would lead to issues fetching their content, and included many checks
 on duplication for both the queue and the authors we looked at. Due to all this
 live checking and parsing there were no real issues with data cleanliness after

@@ -6,20 +6,22 @@ PRAW. We followed all registration protocols and used a valid API key along
 with informative headers as per Reddit policy.
 
 Our data is formatted in both CSV and JSON format, and takes the format of
-a dictionary. The main dictionary links subreddits, by name, to a list that has
-a dictionary and an integer. The integer is the subreddit's size, and the other
+a dictionary. The main dictionary links subreddits, by name, to lists that have
+dictionaries and an integers. The integer is the subreddit's size, and the other
 dictionary has adjacent subreddits as the key and a list of adjacency info
 as a value. This list has only two elements, the total karma users in the
-original subreddit earned posting/commenting on that one, and the total overlap
-in terms of users who posted/commented in both communities.
+original subreddit earned posting/commenting on the new one, and the total 
+overlap in terms of users who posted/commented in both communities.
 
 This is the general structure of the data:
 {"Original-sub": [{"sub1": [sub1-karma, user-overlap1], 
                   "sub2": [sub2-karma, user-overlap2]},
-                  original-size]}
+                  original-size],
+...}
 
 This structure was used as it is the most compact way to store the necessary
-adjacency information, and dictionaries are easily representable in JSON format.
+adjacency information, and becayse dictionaries are easily representable in JSON
+format.
 
 Because this data was scraped off Reddit and error handling was done during
 the scraping process there are no blank values, and all the filtering was
@@ -32,7 +34,7 @@ Using the example strings in the above JSON example as a reference:
 original-sub - a string representing the subreddit from which authors were 
                collected from. For each author their top and newest posts and
                comments were scraped to determine what communities they
-               interacted with.
+               interacted with the most.
 
 sub1, sub2 - these two placeholder strings represent subreddits that authors
              who posted in original-sub also posted/commented in.
@@ -46,7 +48,7 @@ user-overlap1 - this integer represents how many users from the original
                 subreddit also posted/commented in sub1. It is used to determine
                 how strong the relationship is, along with the above karma value
 
-original-size - this integer is just the size of the original subreddit, for
+original-size - this integer is just the size of the original subreddit for
                 weighting purposes later on.
 
 DATA LINK/SAMPLE:
