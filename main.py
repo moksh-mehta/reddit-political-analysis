@@ -56,10 +56,15 @@ subs = pd.DataFrame(columns=cols)
 # Output dict for json
 output = {}
 
+# Collect post text for sentiment analysis
+text_data = {}
+
 # Iterate through subreddits
 # Each sub uses times + (times * per_sub * 4) calls
 # So year, month, week, day with 10 authors per sub is 164 calls per sub
 for sub in subreddits:
+    # Store post body text data in a list
+    raw_text = []
     # These are at top to trigger PRAW api calls info
     subreddit = reddit.subreddit(sub)
     subscribers = reddit.subreddit(sub).subscribers
@@ -91,6 +96,12 @@ for sub in subreddits:
     # Do year, month, week, day
     for item in times:
         for submission in subreddit.top(time_filter = item, limit=per_sub):
+            title = submission.title
+            text = submission.selftext
+            if len(text) > 0:
+                raw_text.append((title, text))
+            else:
+                raw_text.append((title, None))
             authors.append(submission.author)
     # Iterate through authors, getting their top subreddits and their karma
     top_subs = {}
@@ -125,6 +136,9 @@ for sub in subreddits:
                     else:
                         top_subs[display] = [item.score, 1]
                         my_subs.append(display)
+        # Add raw text to dictionary
+    text_data[sub] = raw_text
+    print(raw_text)
     time.sleep(3)
     # Fitler by shred subreddits
     new_top = {k: v for k, v in top_subs.items() if v[1] >= 2}
@@ -141,10 +155,13 @@ for sub in subreddits:
     print(subreddits)
     output[sub] = (sortable, subscribers)
     # Dump as json file
-    with open("output.json", 'w') as file:
+    with open("relations.json", 'w') as file:
         json.dump(output, file, indent = 4)
+    # Dump raw text as well
+    with open("text_data.json", 'w') as file:
+        json.dump(text_data, file, indent = 4)
     new_row = (sub, sortable, subscribers)
     subs.loc[len(subs)] = new_row
     # Also save csv
-    subs.to_csv('output.csv', index=False)
+    subs.to_csv('relations.csv', index=False)
     print(str(reddit.auth.limits["remaining"]) + " calls left!")
