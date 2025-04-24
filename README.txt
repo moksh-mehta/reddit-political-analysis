@@ -10,7 +10,7 @@ level to obtain an overall sentiment value per subreddit. By combining these sen
 graph-based distances from a set of core political subreddits we constructed a dataset that allows
 us to examine the relationship between proximity to political discourse and emotion. By using
 linear regression we evaluate whether subreddits that are more distant from political hubs tend to exhibit more negative sentiment. 
-Cross-validation was also done.
+Cross-validation was also done, and our L2-norm value is 2.504820923622704.
 
 Challenges:
 One challenge was accurately mapping subreddit relationships to compute meaningful distances from political communities.
