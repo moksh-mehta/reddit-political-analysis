@@ -3,6 +3,7 @@ import pandas as pd
 import ast
 from sklearn.linear_model import LinearRegression
 import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
 import os
 import numpy as np
 
@@ -19,7 +20,6 @@ with open(sentiment_file, "r") as f:
 if raw.startswith("dict_items(") and raw.endswith(")"):
     raw = raw[len("dict_items("):-1]
 sentiments = dict(ast.literal_eval(raw))
-
 
 # Distances
 root_to_subs = utils.map_roots_to_subreddits(
@@ -40,12 +40,12 @@ print("Data sample:\n", df.head(), "\n")
 # Pooled Linear Regression
 X = df[["distance"]]
 y = df["sentiment"]
+#X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
 
 model = LinearRegression().fit(X, y)
 print(f"Intercept: {model.intercept_:.4f}")
 print(f"Slope: {model.coef_[0]:.4f}")
 print(f"R-squared: {model.score(X, y):.4f}\n")
-
 
 # Visualization
 xs = np.linspace(df.distance.min(), df.distance.max(), 200).reshape(-1, 1)
@@ -123,4 +123,3 @@ plt.xlabel("Distance from root")
 plt.ylabel("Average sentiment")
 plt.title("Sentiment vs. Distance Regression")
 plt.show()"""
-
