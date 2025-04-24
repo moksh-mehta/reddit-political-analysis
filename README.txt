@@ -57,10 +57,13 @@ fit the context window for Reddit posts. After testing different models, we were
 
  Clustering.py:
 
-Hypothesis: There is a negative correlation between the distance between two nodes and how semantically similar their posts are.
+Hypothesis: There is a negative correlation between the distance between two nodes and how politcally biased they are. 
 
 Method: We calculated the distance in terms of the number of nodes for each subreddit with respect to the seed nodes.
 
 Then we took the text data for each subreddit and calculated its political bias. To do this, 
 we used a transformer-based model from huggingface (a BERTbased model) called ("bucketresearch/politicalBiasBERT"). 
-This essentially returned the percentage of left, center right each text was.
+This essentially returned the percentage of how much left, center, right each text was. We used the ratio of left to right 
+to get a political score. The lesser the score was the more right the text was and the higher the score/ratio was the more left the text was. 
+
+Interpretation: 

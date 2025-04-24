@@ -17,7 +17,7 @@ data_utils_path = os.path.join(parent_dir, 'data')
 sys.path.append(data_utils_path)
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import torch
-from data_utils import map_roots_to_subreddits
+from data import data_utils
 from itertools import groupby
 
 data_path = "data/data/relations.csv"

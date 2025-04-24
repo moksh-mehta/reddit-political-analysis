@@ -8,12 +8,14 @@ import sys
 parent_dir = os.path.abspath('..')
 data_utils_path = os.path.join(parent_dir, 'data')
 sys.path.append(data_utils_path)
-import data_utils as utils
+from data import data_utils as utils
 from sklearn import neighbors, datasets
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import cross_val_score
 from sklearn.datasets import make_regression
 import numpy as np
+
+import statsmodels.api as sm
 
 centers_to_community_to_text = pd.read_csv("center_to_text.csv")
 rows_as_dicts = {}
@@ -60,3 +62,8 @@ plt.xlabel("Distance from root")
 plt.ylabel("Average political bias")
 plt.title("Political Bias vs. Distance Regression")
 plt.show()
+
+X_sm = sm.add_constant(X)
+ols_model = sm.OLS(y, X_sm).fit()
+
+print(ols_model.summary())
