@@ -45,12 +45,17 @@ y = df["sentiment"]
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
 cv_model = LinearRegression()
-cv_scores = cross_val_score(cv_model, X_train, y_train, cv=5, scoring='r2')
+cv_scores = cross_val_score(cv_model, X_train, y_train, cv=5, scoring='r2') # cross-validation
 
 model = LinearRegression().fit(X_train, y_train)
 print(f"Intercept: {model.intercept_:.4f}")
 print(f"Slope: {model.coef_[0]:.4f}")
 print(f"R-squared: {model.score(X, y):.4f}\n")
+
+
+l2_norm = np.linalg.norm(y - model.predict(X)) 
+print("L2 NORM")
+print(l2_norm)
 
 # Visualization
 xs = np.linspace(df.distance.min(), df.distance.max(), 200).reshape(-1, 1)
