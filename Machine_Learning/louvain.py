@@ -20,7 +20,7 @@ import torch
 from data_utils import map_roots_to_subreddits
 from itertools import groupby
 
-data_path = "/Users/navyasahay/Desktop/Desktop - Navya's MacBook/Junior_year/Spring 2025/Data Science/final-projects-team-green/data/data/relations.csv"
+data_path = "data/data/relations.csv"
 subs = pd.read_csv(data_path)
 
 graph = nx.Graph()
@@ -63,7 +63,7 @@ plt.show()
 
 #Check the political leanings of the textual data in the two political communities formed. 
 
-def map_subreddits_to_posts(file_path="/Users/navyasahay/Desktop/Desktop - Navya's MacBook/Junior_year/Spring 2025/Data Science/final-projects-team-green/data/data/text_data.json"):
+def map_subreddits_to_posts(file_path="data/data/text_data.json"):
     '''
     Maps subreddits to all the texts in their posts
     '''

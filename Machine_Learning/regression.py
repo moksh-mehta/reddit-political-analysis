@@ -62,6 +62,8 @@ print(l2_norm)
 # Visualization
 xs = np.linspace(df.distance.min(), df.distance.max(), 200).reshape(-1, 1)
 ys = model.predict(xs)
+yhat = model.predict(X_test)
+
 
 # Plotting
 plt.figure(figsize=(8, 5))
