@@ -105,7 +105,7 @@ tokenizer = AutoTokenizer.from_pretrained("bert-base-cased")
 
 model = AutoModelForSequenceClassification.from_pretrained("bucketresearch/politicalBiasBERT")
 
-subreddits_to_posts = map_subreddits_to_posts(file_path="/Users/navyasahay/Desktop/Desktop - Navya's MacBook/Junior_year/Spring 2025/Data Science/final-projects-team-green/data/data/text_data.json")
+subreddits_to_posts = map_subreddits_to_posts(file_path="data/data/text_data.json")
 text_by_community = []
 
 for com in political_communities:

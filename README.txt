@@ -66,4 +66,8 @@ we used a transformer-based model from huggingface (a BERTbased model) called ("
 This essentially returned the percentage of how much left, center, right each text was. We used the ratio of left to right 
 to get a political score. The lesser the score was the more right the text was and the higher the score/ratio was the more left the text was. 
 
-Interpretation: 
+Interpretation: We got a p_value of 0.034 <= 0.05. Hence, we can reject the null hypothesis.As we got a correlation slope of -1.6686 suggesting
+a negative  coefficient. However, the R^2 value was 0.0019 which is very low which calls into question how statistically significant this correlation is. 
+
+Challenges: The issue is that the correlatiion is very weak partly because the BERT based model we used had a token limit. As a result we had to chunk the text piece 
+by piece and then take the mean of the logits. This probably weakened the relevence and variance of the data.
