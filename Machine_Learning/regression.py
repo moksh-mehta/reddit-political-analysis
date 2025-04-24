@@ -3,7 +3,7 @@ import pandas as pd
 import ast
 from sklearn.linear_model import LinearRegression
 import matplotlib.pyplot as plt
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, cross_val_score
 import os
 import numpy as np
 
@@ -42,10 +42,12 @@ print("Data sample:\n", df.head(), "\n")
 # Pooled Linear Regression
 X = df[["distance"]]
 y = df["sentiment"]
-#X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
-# if we want to do a train/test split later on
 
-model = LinearRegression().fit(X, y)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+cv_model = LinearRegression()
+cv_scores = cross_val_score(cv_model, X_train, y_train, cv=5, scoring='r2')
+
+model = LinearRegression().fit(X_train, y_train)
 print(f"Intercept: {model.intercept_:.4f}")
 print(f"Slope: {model.coef_[0]:.4f}")
 print(f"R-squared: {model.score(X, y):.4f}\n")
