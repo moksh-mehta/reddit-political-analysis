@@ -945,7 +945,7 @@ med1, med2 = np.median(republican_sentiments), np.median(democrat_sentiments)
 n1, n2 = len(republican_sentiments), len(democrat_sentiments)
 
 # Output
-print("Two-Sample t-Test (Welch’s):")
+print("Two-Sample t-Test:")
 print(f"  Sample sizes:      n_republican = {n1}, n_democrat = {n2}")
 print(f"  Means:             mean_republican = {mean1:.4f}, mean_democrat = {mean2:.4f}")
 print(f"  Std deviations:    std_republican = {std1:.4f}, std_democrat = {std2:.4f}")
@@ -953,13 +953,9 @@ print(f"  t-statistic:       {t_stat:.4f}")
 print(f"  p-value:           {t_pval:.4f}")
 
 
-
 # Visualization
-
-# One figure, two histograms
 plt.figure(figsize=(7, 4))
 
-# `density=True` shows probability density; bins='auto' lets NumPy pick a good rule
 plt.hist(republican_sentiments, bins='auto', density=True, alpha=0.6, label='Republican')
 plt.hist(democrat_sentiments, bins='auto', density=True, alpha=0.6, label='Democrat')
 
