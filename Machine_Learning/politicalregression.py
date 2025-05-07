@@ -8,7 +8,7 @@ import sys
 parent_dir = os.path.abspath('..')
 data_utils_path = os.path.join(parent_dir, 'data')
 sys.path.append(data_utils_path)
-from data import data_utils as utils
+import data_utils as utils
 from sklearn import neighbors, datasets
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import cross_val_score
@@ -46,7 +46,7 @@ model = LinearRegression().fit(Xtrainval, ytrainval)
 overall_scores = cross_val_score(model, Xtrainval, ytrainval, cv=5)
 print(f"Pooled model → intercept = {model.intercept_:.4f}, "
       f"slope = {model.coef_[0]:.4f}, R² = {model.score(X, y):.4f}\n")
-print(overall_scores)
+print("overall_score", overall_scores)
 
 
 yhat = model.predict(Xtest)  #TODO: Fill in the right answer for ???

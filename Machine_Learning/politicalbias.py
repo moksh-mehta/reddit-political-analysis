@@ -17,53 +17,12 @@ data_utils_path = os.path.join(parent_dir, 'data')
 sys.path.append(data_utils_path)
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import torch
-from data import data_utils
+from data_utils import map_roots_to_subreddits
 from itertools import groupby
-
-data_path = "data/data/relations.csv"
-subs = pd.read_csv(data_path)
-
-graph = nx.Graph()
-
-for index, row in subs.iterrows():
-    subreddit = row['sub_name']
-    sub_dictionary = ast.literal_eval(row['top_subs'])
-    graph.add_node(subreddit)
-
-    for sub in sub_dictionary.keys():
-        karma_count, user_count  = sub_dictionary[sub]
-        edge_weight = karma_count / user_count
-        if (user_count > 5):
-            graph.add_node(sub)
-            graph.add_edge(subreddit, sub, weight=edge_weight)
-
-
-communities = nx.community.louvain_communities(graph)
-#print(communities)
-political_communities = []
-for com in communities:
-    if ('conservative' in com) or ('liberal' in com) or ('politics' in com) or ('republican' in com) or ('democrats' in com) or ('trump' in com) or ('worldnews' in com) or ('progressive' in com):
-        political_communities.append(com)
-        
-
-graph_layout = nx.spring_layout(graph)
-
-colors = plt.cm.get_cmap('tab20',len(political_communities))
-
-for i,com in enumerate(political_communities):
-    nx.draw_networkx_nodes(graph, graph_layout, nodelist=list(com),node_color=[colors(i)],label=f"Community{i}", node_size=50)
-
-nx.draw_networkx_edges(graph, graph_layout, alpha=0.2)
-
-plt.title("Community clusters")
-plt.axis("off")
-plt.legend(markerscale=3)
-plt.show()
-
 
 #Check the political leanings of the textual data in the two political communities formed. 
 
-def map_subreddits_to_posts(file_path="data/data/text_data.json"):
+def map_subreddits_to_posts(file_path="/Users/navyasahay/Desktop/Desktop - Navya's MacBook/Junior_year/Spring 2025/Data Science/final-projects-team-green/data/data/text_data.json"):
     '''
     Maps subreddits to all the texts in their posts
     '''
@@ -105,7 +64,7 @@ tokenizer = AutoTokenizer.from_pretrained("bert-base-cased")
 
 model = AutoModelForSequenceClassification.from_pretrained("bucketresearch/politicalBiasBERT")
 
-subreddits_to_posts = map_subreddits_to_posts(file_path="data/data/text_data.json")
+subreddits_to_posts = map_subreddits_to_posts(file_path="/Users/navyasahay/Desktop/Desktop - Navya's MacBook/Junior_year/Spring 2025/Data Science/final-projects-team-green/data/data/text_data.json")
 text_by_community = []
 
 for com in political_communities:
@@ -117,6 +76,8 @@ for com in political_communities:
 
     text_by_community.append(text)
 
+ 
+'''
 for t in text_by_community:
     inputs = tokenizer(t, return_tensors="pt")
 
@@ -146,3 +107,50 @@ for t in text_by_community:
     
   
     print(mean_logits.softmax(dim=-1)[0].tolist()) 
+
+'''
+
+roots_to_subreddits_distance = map_roots_to_subreddits()
+communities_by_distance = {}
+
+
+for k in roots_to_subreddits_distance.keys():
+    communities_by_distance[k] =  list({key: list(group) for key, group in groupby(roots_to_subreddits_distance[k], key=lambda x: x[1])}.values())
+
+centers_to_community_to_text = []
+
+for k in communities_by_distance.keys():
+    center_text = subreddits_to_posts[k]
+    community_texts = {}
+    for c in communities_by_distance[k]:
+        sub_text  = []
+        for sub in c:
+            chunk_logits = []
+            dist = sub[1]
+            if (sub[0] in subreddits_to_posts.keys()):
+                add_text  = subreddits_to_posts[sub[0]]
+            else:
+                add_text = ""
+            for i in range(0, len(add_text), 512):
+                chunk = " ".join(add_text[i:i + 512])
+                # Now tokenize just the chunk
+                inputs = tokenizer(chunk, return_tensors="pt", truncation=True, padding=True)
+                
+                labels = torch.tensor([0])
+                with torch.no_grad():
+                    outputs = model(**inputs, labels=labels)
+                
+                chunk_logits.append(outputs.logits)
+                # Average across all logits
+                if chunk_logits:
+                    mean_logits = torch.mean(torch.stack(chunk_logits), dim=0)
+                    predictions = mean_logits.softmax(dim=-1)[0].tolist()
+                    category = predictions[0] / predictions[2]
+                                
+                    sub_text.append(category)
+        community_texts[dist] = sub_text
+    centers_to_community_to_text.append([k, community_texts])
+
+
+center_to_text_df = pd.DataFrame(centers_to_community_to_text)
+center_to_text_df.to_csv("center_to_text.csv", index=False)
