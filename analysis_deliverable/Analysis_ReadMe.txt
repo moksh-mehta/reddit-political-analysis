@@ -11,9 +11,11 @@ To test this, we perform sentiment analysis on subreddit content to assign each 
 sentiment score (ranging from negative to positive). These scores are then averaged at the community 
 level to obtain an overall sentiment value per subreddit. By combining these sentiment averages with 
 graph-based distances from a set of core political subreddits we constructed a dataset that allows
-us to examine the relationship between proximity to political discourse and emotion. 
-Cross-validation was also done, and our L2-norm value is 2.504820923622704.
-We got a p_value of 0.0 <= 0.05. Hence, we can reject the null hypothesis that there is no correlation 
+us to examine the relationship between proximity to political discourse and emotion. We trained, validated 
+and tested a linear regression model to determine the correlation between the two variables. Cross-validation 
+was also done, and for regularization, our L2-norm value is 2.504820923622704.
+
+Interpretation: We got a p_value of 0.0 <= 0.05. Hence, we can reject the null hypothesis that there is no correlation 
 between the two variables as the low p_value indicates statistical significance for the correlation.
 As we got a correlation slope of 0.0288, it suggests a  positive correlation between the distance from the root and positivity of the sentiment. 
 As a result, we must reject our hypothesis as subreddits further from the root are actually more positive in sentiment. However, the R^2 value was 0.0054 which is very low and suggests that 
@@ -63,16 +65,16 @@ fit the context window for Reddit posts. After testing different models, we were
  We chose the party that occurred first computationally, but this does mean that some of our data 
  doesn’t perfectly fit into one category or another.
 
-Clustering.py & politicalregression.py:
+politicalbias.py & politicalregression.py:
 
 Hypothesis: There is a negative correlation between the distance between two nodes and how politcally biased they are. 
 
 Method: We calculated the distance in terms of the number of nodes for each subreddit with respect to the seed nodes.
-
 Then we took the text data for each subreddit and calculated its political bias. To do this, 
 we used a transformer-based model from huggingface (a BERTbased model) called ("bucketresearch/politicalBiasBERT"). 
 This essentially returned the percentage of how much left, center, right each text was. We used the ratio of left to right 
 to get a political score. The lesser the score was the more right the text was and the higher the score/ratio was the more left the text was. 
+We trained, cross-validated and tested a linear regression model to determine the correlation between the two variables. 
 
 Interpretation: We got a p_value of 0.034 <= 0.05. Hence, we can reject the null hypothesis.As we got a correlation slope of -1.6686 suggesting
 a negative  coefficient. However, the R^2 value was 0.0019 which is very low which calls into question how statistically significant this correlation is. 
