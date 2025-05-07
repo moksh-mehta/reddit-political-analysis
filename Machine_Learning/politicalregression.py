@@ -28,7 +28,7 @@ for _, row in centers_to_community_to_text.iterrows():
             for b in biases:
                 rows.append({
                     "root":      row['0'],
-                    "distance":  dist,
+                    "distance":  np.log(dist),
                     "bias":  b
                 })
 
