@@ -8,7 +8,7 @@ import sys
 parent_dir = os.path.abspath('..')
 data_utils_path = os.path.join(parent_dir, 'data')
 sys.path.append(data_utils_path)
-from data import data_utils as utils
+import data_utils as utils
 from sklearn import neighbors, datasets
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import cross_val_score
