@@ -47,8 +47,7 @@ print(df)
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
 cv_model = LinearRegression()
-cv_scores = cross_val_score(cv_model, X_train, y_train, cv=5, scoring='r2') # cross-validation\
-print(cv_scores)
+cv_scores = cross_val_score(cv_model, X_train, y_train, cv=5, scoring='r2') # cross-validation
 
 model = LinearRegression().fit(X_train, y_train)
 print(f"Intercept: {model.intercept_:.4f}")
