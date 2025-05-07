@@ -1,4 +1,4 @@
-from data import data_utils as utils
+import data_utils as utils
 import pandas as pd
 import ast
 from sklearn.linear_model import LinearRegression
