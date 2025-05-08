@@ -1,6 +1,4 @@
 
-
-
 regression.py:
 Hypothesis A: There is a positive correlation between the distance from a 
 political community and the negative sentiments of those communities.
@@ -15,7 +13,8 @@ us to examine the relationship between proximity to political discourse and emot
 and tested a linear regression model to determine the correlation between the two variables. Cross-validation 
 was also done, and for regularization, our L2-norm value is 2.504820923622704.
 
-Interpretation: We got a p_value of 0.0 <= 0.05. Hence, we can reject the null hypothesis that there is no correlation 
+Interpretation: The mean squared error we got for the regressionn model was 0.0072, which was very low indicating a high accuracy. 
+We got a p_value of 0.0 <= 0.05. Hence, we can reject the null hypothesis that there is no correlation 
 between the two variables as the low p_value indicates statistical significance for the correlation.
 As we got a correlation slope of 0.0288, it suggests a  positive correlation between the distance from the root and positivity of the sentiment. 
 As a result, we must reject our hypothesis as subreddits further from the root are actually more positive in sentiment. However, the R^2 value was 0.0054 which is very low and suggests that 
@@ -76,7 +75,8 @@ This essentially returned the percentage of how much left, center, right each te
 to get a political score. The lesser the score was the more right the text was and the higher the score/ratio was the more left the text was. 
 We trained, cross-validated and tested a linear regression model to determine the correlation between the two variables. 
 
-Interpretation: We got a p_value of 0.034 <= 0.05. Hence, we can reject the null hypothesis.As we got a correlation slope of -1.6686 suggesting
+Interpretation: The mean squared error we got was 3926.62 which given the scale of the political bias ratio (with the maximum political bias being approximately 
+550 indicating extreme bias towards left) was relatively low, indicating a reasonably high accuracy. We got a p_value of 0.034 <= 0.05. Hence, we can reject the null hypothesis.As we got a correlation slope of -1.6686 suggesting
 a negative  coefficient. However, the R^2 value was 0.0019 which is very low which calls into question how statistically significant this correlation is. 
 
 Challenges: The issue with the low R^2 value which indicates higher unexplained variance  may be partly because the BERT based model we used had a token limit. As a result we had to chunk the text piece 
