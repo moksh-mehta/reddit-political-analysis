@@ -22,6 +22,7 @@ from itertools import groupby
 
 #Check the political leanings of the textual data in the two political communities formed. 
 
+#Mapping the textual data of all subreddits to their posts
 def map_subreddits_to_posts(file_path="/Users/navyasahay/Desktop/Desktop - Navya's MacBook/Junior_year/Spring 2025/Data Science/final-projects-team-green/data/data/text_data.json"):
     '''
     Maps subreddits to all the texts in their posts
@@ -60,64 +61,28 @@ seeds = ['conservative',
 'joerogan'
 'trump']
 
+#Using this HuggingFace BERT-based model to get a political bias score:
 tokenizer = AutoTokenizer.from_pretrained("bert-base-cased")
 
 model = AutoModelForSequenceClassification.from_pretrained("bucketresearch/politicalBiasBERT")
 
+#Getting the textual data from the subreddits: 
 subreddits_to_posts = map_subreddits_to_posts(file_path="/Users/navyasahay/Desktop/Desktop - Navya's MacBook/Junior_year/Spring 2025/Data Science/final-projects-team-green/data/data/text_data.json")
-text_by_community = []
 
-for com in political_communities:
-    text = " "
-    for item in com:
-        if (item not in seeds) and (item in subreddits_to_posts):
-            sub_posts = subreddits_to_posts[item]
-            text += " ".join(sub_posts) 
-
-    text_by_community.append(text)
-
- 
-'''
-for t in text_by_community:
-    inputs = tokenizer(t, return_tensors="pt")
-
-    chunk_logits = []
-    for i in range(0, inputs['input_ids'].shape[1], 512):
-        labels = torch.tensor([0])
-        # Slice the input to create a chunk of size max_length
-        chunk_input_ids = inputs['input_ids'][0][i:i + 512].unsqueeze(0)
-        chunk_attention_mask = inputs['attention_mask'][0][i:i + 512].unsqueeze(0) if 'attention_mask' in inputs else None
-
-        # Prepare chunk inputs
-        chunk_inputs = {
-            'input_ids': chunk_input_ids,
-            'attention_mask': chunk_attention_mask
-        }
-        
-        # Pass the chunk through the model
-        with torch.no_grad():
-            chunk_outputs = model(**chunk_inputs,labels=labels)
-        
-        # Collect the logits for each chunk
-        chunk_logits.append(chunk_outputs.logits)
-
-    # Stack the logits and compute the mean across all chunks
-    mean_logits = torch.mean(torch.stack(chunk_logits), dim=0)
-
-    
-  
-    print(mean_logits.softmax(dim=-1)[0].tolist()) 
-
-'''
-
+#Getting the distance of each subreddit node from the seed nodes 
 roots_to_subreddits_distance = map_roots_to_subreddits()
 communities_by_distance = {}
 
-
+#Aggregrating the textual data for each community of subreddits based on distance
 for k in roots_to_subreddits_distance.keys():
     communities_by_distance[k] =  list({key: list(group) for key, group in groupby(roots_to_subreddits_distance[k], key=lambda x: x[1])}.values())
 
 centers_to_community_to_text = []
+
+#For each community, taking the textual data and calculating the political bias -- ratio of left to right 
+#based on the model output -- an array of size 3 where [0] = left percentage, [1] = percentage, [2] = right
+#Note: the textual data of each community is broken to chunks due to the token limit of the model and then the 
+# average of the logits of each chunk is taken 
 
 for k in communities_by_distance.keys():
     center_text = subreddits_to_posts[k]
@@ -133,7 +98,7 @@ for k in communities_by_distance.keys():
                 add_text = ""
             for i in range(0, len(add_text), 512):
                 chunk = " ".join(add_text[i:i + 512])
-                # Now tokenize just the chunk
+                # Tokenizing just the chunk
                 inputs = tokenizer(chunk, return_tensors="pt", truncation=True, padding=True)
                 
                 labels = torch.tensor([0])
@@ -141,7 +106,7 @@ for k in communities_by_distance.keys():
                     outputs = model(**inputs, labels=labels)
                 
                 chunk_logits.append(outputs.logits)
-                # Average across all logits
+                # Averaging across all logits
                 if chunk_logits:
                     mean_logits = torch.mean(torch.stack(chunk_logits), dim=0)
                     predictions = mean_logits.softmax(dim=-1)[0].tolist()

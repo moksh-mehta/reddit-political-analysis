@@ -14,17 +14,20 @@ from sklearn.model_selection import train_test_split
 from sklearn.model_selection import cross_val_score
 from sklearn.datasets import make_regression
 import numpy as np
-
 import statsmodels.api as sm
+from sklearn.metrics import mean_squared_error
 
+#Getting the political bias scores of each community by distance from the seed
 centers_to_community_to_text = pd.read_csv("center_to_text.csv")
 rows_as_dicts = {}
 centers_to_community_to_text['1'] = centers_to_community_to_text['1'].apply(ast.literal_eval)
 
+#Processing the data into a dataframe that can be used for regression
 rows = []
 for _, row in centers_to_community_to_text.iterrows():
     dictionary = row['1']
     for dist, biases in dictionary.items():
+            dist = float(dist)
             for b in biases:
                 rows.append({
                     "root":      row['0'],
@@ -36,7 +39,10 @@ for _, row in centers_to_community_to_text.iterrows():
 
 df = pd.DataFrame(rows)
 
+df = pd.DataFrame(rows)
+df = df[np.isfinite(df["distance"]) & np.isfinite(df["bias"])]
 
+#Training, testing and validating a Linear Regression model on the Following:
 X = df[["distance"]]
 y = df["bias"]
 
@@ -51,6 +57,10 @@ print("overall_score", overall_scores)
 
 yhat = model.predict(Xtest)  #TODO: Fill in the right answer for ???
 print(yhat[:5])
+
+
+print("mean squared error", mean_squared_error(ytest, yhat))
+print("y_max", y.max())
 
 # Print testing R-squared
 testing_r = model.score(Xtest, ytest) #TODO: Fill in the right answer for ???

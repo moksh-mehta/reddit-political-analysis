@@ -1,16 +1,24 @@
+import sys
+import os
+parent_dir = os.path.abspath('..')
+data_utils_path = os.path.join(parent_dir, 'data')
+sys.path.append(data_utils_path)
 import data_utils as utils
 import pandas as pd
 import ast
 from sklearn.linear_model import LinearRegression
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split, cross_val_score
-import os
-import numpy as np
 
+import numpy as np
+from sklearn.metrics import mean_squared_error
+
+from scipy import stats
 import statsmodels.api as sm
 
-relations_path = "data/data/relations.json"
-sentiment_file = "Machine_Learning/results.txt"
+#Getting the subrredits network data and the sentiment of the textual data for each subreddit 
+relations_path = "../data/data/relations.json"
+sentiment_file = "results.txt"
 roots = {
     "conservative", "politics", "republican",
     "liberal", "democrats", "progressive",
@@ -39,11 +47,9 @@ for subs in root_to_subs.values():
 df = pd.DataFrame(rows, columns=["distance", "sentiment"])
 print("Data sample:\n", df.head(), "\n")
 
-# Pooled Linear Regression
+# Pooled Linear Regression - Training (witha  regularizer), validating and testing a Linear Regression Model
 X = df[["distance"]]
 y = df["sentiment"]
-
-print(df)
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
 cv_model = LinearRegression()
@@ -63,6 +69,8 @@ print(l2_norm)
 xs = np.linspace(df.distance.min(), df.distance.max(), 200).reshape(-1, 1)
 ys = model.predict(xs)
 yhat = model.predict(X_test)
+
+print("mean squared error", mean_squared_error(y_test, yhat))
 
 # Plotting
 plt.figure(figsize=(8, 5))
