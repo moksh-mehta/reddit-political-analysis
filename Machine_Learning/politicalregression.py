@@ -46,6 +46,7 @@ df = df[np.isfinite(df["distance"]) & np.isfinite(df["bias"])]
 X = df[["distance"]]
 y = df["bias"]
 
+
 Xtrainval, Xtest, ytrainval, ytest = train_test_split(X, y, test_size = 0.2, random_state = 0)
 
 model = LinearRegression().fit(Xtrainval, ytrainval)

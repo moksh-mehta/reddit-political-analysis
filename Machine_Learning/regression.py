@@ -12,8 +12,6 @@ from sklearn.model_selection import train_test_split, cross_val_score
 
 import numpy as np
 from sklearn.metrics import mean_squared_error
-
-from scipy import stats
 import statsmodels.api as sm
 
 #Getting the subrredits network data and the sentiment of the textual data for each subreddit 
